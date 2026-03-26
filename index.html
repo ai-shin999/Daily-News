@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>US Market Daily — 미국 증시 데일리</title>
+  <title>글로벌 증시 데일리 — 미국·한국 Market Daily</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -481,6 +481,86 @@
     .fade-in:nth-child(3) { animation-delay: 0.3s; }
     .fade-in:nth-child(4) { animation-delay: 0.4s; }
 
+    /* TAB NAV */
+    .tab-nav {
+      display: flex;
+      background: var(--bg2);
+      border-bottom: 2px solid var(--border);
+      padding: 0 40px;
+      gap: 4px;
+      position: sticky;
+      top: 73px;
+      z-index: 99;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 2px;
+      padding: 14px 24px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-btn.kr-active { color: #ff7675; border-bottom-color: #ff7675; }
+
+    /* TAB PANELS */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* KOREA SECTION */
+    .kr-ticker-wrap { background: #1a0a0a; overflow:hidden; white-space:nowrap; padding:6px 0; }
+    .kr-ticker-inner { display:inline-block; animation:ticker 35s linear infinite; }
+    .kr-ticker-inner span { font-family:'DM Mono',monospace; font-size:12px; color:#aaa; margin-right:36px; }
+    .kr-ticker-inner span.kup   { color:#ff7675; }
+    .kr-ticker-inner span.kdown { color:#74b9ff; }
+
+    .kr-indices {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .kr-index-card { background:var(--bg2); padding:20px 24px; transition:background .2s; }
+    .kr-index-card:hover { background:var(--bg3); }
+
+    .kr-up   { color: #ff7675; }
+    .kr-down { color: #74b9ff; }
+
+    /* Korea news tags */
+    .tag-kospi  { background:rgba(255,118,117,0.15); color:#ff7675; }
+    .tag-corp   { background:rgba(116,185,255,0.15); color:#74b9ff; }
+    .tag-kreco  { background:rgba(255,187,0,0.15);   color:var(--accent3); }
+    .tag-krmkt  { background:rgba(0,255,136,0.15);   color:var(--accent); }
+
+    /* Sector bars */
+    .sector-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .sector-label { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); min-width:80px; }
+    .sector-bar-bg { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+    .sector-bar-fill { height:100%; border-radius:3px; }
+
+    /* AI KR box */
+    .ai-kr-box {
+      background: linear-gradient(135deg, rgba(255,118,117,0.06), rgba(116,185,255,0.06));
+      border: 1px solid rgba(255,118,117,0.25);
+      border-radius: 4px;
+      padding: 24px;
+    }
+    .ai-kr-icon { background: #ff7675; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; }
+    .ai-kr-title { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; color:#ff7675; }
+    .ai-kr-btn {
+      margin-top:14px; background:transparent; border:1px solid rgba(255,118,117,0.3);
+      color:#ff7675; font-family:'DM Mono',monospace; font-size:11px; padding:7px 14px;
+      border-radius:2px; cursor:pointer; letter-spacing:1px; transition:background .2s; width:100%;
+    }
+    .ai-kr-btn:hover { background:rgba(255,118,117,0.1); }
+
     @media (max-width: 900px) {
       .main { grid-template-columns: 1fr; padding: 20px; }
       .indices { grid-template-columns: repeat(2, 1fr); }
@@ -490,6 +570,15 @@
   </style>
 </head>
 <body>
+
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('us', this)">🇺🇸 미국 증시</button>
+  <button class="tab-btn" onclick="switchTab('kr', this)">🇰🇷 국내 증시</button>
+</div>
+
+<!-- ===== 미국 탭 ===== -->
+<div id="tab-us" class="tab-panel active">
 
 <!-- TICKER TAPE -->
 <div class="ticker-wrap">
@@ -526,7 +615,7 @@
 
 <!-- HEADER -->
 <header>
-  <div class="logo">US<span>MARKET</span>DAILY</div>
+  <div class="logo">GLOBAL<span>MARKET</span>DAILY</div>
   <div class="header-right">
     <div class="market-status">
       <div class="dot" id="market-dot"></div>
@@ -767,8 +856,270 @@
 </div>
 
 <!-- FOOTER -->
+<div id="tab-kr" class="tab-panel">
+
+  <!-- KR TICKER -->
+  <div class="kr-ticker-wrap">
+    <div class="kr-ticker-inner">
+      <span class="kup">KOSPI 2,748.11 ▲+12.34(+0.45%)</span>
+      <span class="kdown">KOSDAQ 854.22 ▼-3.81(-0.44%)</span>
+      <span class="kup">삼성전자 78,400 ▲+800(+1.03%)</span>
+      <span class="kup">SK하이닉스 196,500 ▲+3,200(+1.66%)</span>
+      <span class="kdown">LG에너지솔루션 381,000 ▼-5,000(-1.30%)</span>
+      <span class="kup">NAVER 198,000 ▲+2,500(+1.28%)</span>
+      <span class="kdown">카카오 42,350 ▼-450(-1.05%)</span>
+      <span class="kup">현대차 238,000 ▲+1,500(+0.63%)</span>
+      <span class="kdown">에코프로 98,400 ▼-7,650(-7.22%)</span>
+      <span class="kup">원/달러 1,338.50 ▲+2.30</span>
+      <span class="kup">삼성전자 78,400 ▲+800(+1.03%)</span>
+      <span class="kdown">KOSDAQ 854.22 ▼-3.81(-0.44%)</span>
+      <span class="kup">KOSPI 2,748.11 ▲+12.34(+0.45%)</span>
+      <span class="kup">SK하이닉스 196,500 ▲+3,200(+1.66%)</span>
+      <span class="kdown">LG에너지솔루션 381,000 ▼-5,000(-1.30%)</span>
+      <span class="kup">NAVER 198,000 ▲+2,500(+1.28%)</span>
+      <span class="kdown">카카오 42,350 ▼-450(-1.05%)</span>
+      <span class="kup">현대차 238,000 ▲+1,500(+0.63%)</span>
+    </div>
+  </div>
+
+  <!-- KR INDEX CARDS -->
+  <div class="kr-indices">
+    <div class="kr-index-card fade-in">
+      <div class="index-name">KOSPI</div>
+      <div class="index-value kr-up">2,748.11</div>
+      <div class="index-change kr-up">▲ 12.34 (+0.45%)</div>
+    </div>
+    <div class="kr-index-card fade-in">
+      <div class="index-name">KOSDAQ</div>
+      <div class="index-value kr-down">854.22</div>
+      <div class="index-change kr-down">▼ 3.81 (-0.44%)</div>
+    </div>
+    <div class="kr-index-card fade-in">
+      <div class="index-name">KOSPI 200</div>
+      <div class="index-value kr-up">365.48</div>
+      <div class="index-change kr-up">▲ 1.72 (+0.47%)</div>
+    </div>
+    <div class="kr-index-card fade-in">
+      <div class="index-name">원 / 달러</div>
+      <div class="index-value kr-up">1,338.50</div>
+      <div class="index-change kr-up">▲ 2.30 (+0.17%)</div>
+    </div>
+    <div class="kr-index-card fade-in">
+      <div class="index-name">3년 국채</div>
+      <div class="index-value" style="color:var(--accent3)">3.42%</div>
+      <div class="index-change kr-up">▲ 0.02bp</div>
+    </div>
+  </div>
+
+  <!-- KR MAIN -->
+  <div class="main">
+    <div class="content">
+
+      <!-- 헤드라인 -->
+      <div class="section-header">
+        <div class="section-title">🇰🇷 오늘의 헤드라인</div>
+        <div class="section-line"></div>
+        <div class="section-tag">장 마감</div>
+      </div>
+
+      <div class="featured-card fade-in">
+        <div class="featured-img" style="background:linear-gradient(135deg,#1a0a0a,#2d1515,#4a1010)">🏦</div>
+        <div class="featured-body">
+          <div class="news-tag tag-kreco">속보</div>
+          <div class="news-title">한국은행, 기준금리 3.0% 동결… "하반기 인하 가능성 열어둬"</div>
+          <div class="news-summary">
+            한국은행 금융통화위원회가 기준금리를 3.0%로 동결했다. 이창용 총재는 "국내 소비 회복세가 더디고 수출 불확실성이 확대됐다"며 하반기 인하 가능성을 시사했다. 시장은 6월 첫 인하 가능성을 60%로 반영하며 채권 금리는 소폭 하락했다.
+          </div>
+          <div class="news-meta">
+            <span>🕐 1시간 전</span><span>연합뉴스</span><span>📊 시장영향: 높음</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 뉴스 리스트 -->
+      <div class="section-header">
+        <div class="section-title">주요 뉴스</div>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="news-list">
+        <div class="news-item fade-in">
+          <div>
+            <div class="news-tag tag-corp" style="display:inline-block;margin-bottom:8px;">기업</div>
+            <div class="news-item-title">삼성전자, 엔비디아향 HBM3E 납품 확정… 반도체 업황 회복 신호탄</div>
+            <div class="news-item-meta"><span>🕐 2시간 전</span><span>한국경제</span><span class="kr-up">삼성전자 +2.1%</span></div>
+          </div>
+          <div class="news-num">01</div>
+        </div>
+
+        <div class="news-item fade-in">
+          <div>
+            <div class="news-tag tag-kreco" style="display:inline-block;margin-bottom:8px;">거시경제</div>
+            <div class="news-item-title">2월 수출 12개월 연속 플러스… 반도체·자동차 쌍끌이 성장</div>
+            <div class="news-item-meta"><span>🕐 3시간 전</span><span>매일경제</span><span class="kr-up">KOSPI +0.45%</span></div>
+          </div>
+          <div class="news-num">02</div>
+        </div>
+
+        <div class="news-item fade-in">
+          <div>
+            <div class="news-tag tag-corp" style="display:inline-block;margin-bottom:8px;">실적</div>
+            <div class="news-item-title">SK하이닉스 1분기 영업이익 6조 돌파 전망… 증권가 일제히 목표가 상향</div>
+            <div class="news-item-meta"><span>🕐 4시간 전</span><span>서울경제</span><span class="kr-up">SK하이닉스 +1.7%</span></div>
+          </div>
+          <div class="news-num">03</div>
+        </div>
+
+        <div class="news-item fade-in">
+          <div>
+            <div class="news-tag tag-krmkt" style="display:inline-block;margin-bottom:8px;">수급</div>
+            <div class="news-item-title">외국인, 코스피 4거래일 연속 순매수… 반도체·금융주 1.2조 집중 매입</div>
+            <div class="news-item-meta"><span>🕐 5시간 전</span><span>이데일리</span><span>외국인 +4,820억</span></div>
+          </div>
+          <div class="news-num">04</div>
+        </div>
+
+        <div class="news-item fade-in">
+          <div>
+            <div class="news-tag tag-kreco" style="display:inline-block;margin-bottom:8px;">환율·채권</div>
+            <div class="news-item-title">미 FOMC 금리 동결 여파… 원/달러 1,340원 근접, 채권 강세</div>
+            <div class="news-item-meta"><span>🕐 6시간 전</span><span>연합인포맥스</span><span class="kr-down">원달러 +2.30원</span></div>
+          </div>
+          <div class="news-num">05</div>
+        </div>
+
+        <div class="news-item fade-in">
+          <div>
+            <div class="news-tag tag-corp" style="display:inline-block;margin-bottom:8px;">공시</div>
+            <div class="news-item-title">현대차, 1분기 미국 판매 사상 최대… EV 라인업 아이오닉 효과</div>
+            <div class="news-item-meta"><span>🕐 7시간 전</span><span>조선비즈</span><span class="kr-up">현대차 +0.6%</span></div>
+          </div>
+          <div class="news-num">06</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KR SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- AI 국내 시황 요약 -->
+      <div class="ai-kr-box">
+        <div class="ai-box-header">
+          <div class="ai-kr-icon">✦</div>
+          <div class="ai-kr-title" style="margin-left:10px;">AI 국내 시황 요약</div>
+        </div>
+        <div id="ai-kr-text">
+          <div class="ai-loading"><span>분석 중</span><div class="ai-loading-dots"><span>.</span><span>.</span><span>.</span></div></div>
+        </div>
+        <button class="ai-kr-btn" onclick="fetchKRAI()">↻ AI 요약 새로고침</button>
+      </div>
+
+      <!-- 급등 TOP5 -->
+      <div>
+        <div class="section-header" style="margin-bottom:16px;">
+          <div class="section-title" style="font-size:16px;">▲ 급등 TOP 5</div>
+          <div class="section-line"></div>
+        </div>
+        <div class="movers-list">
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-up">이수페타시스</div><div class="mover-name">PCB 기판</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">48,200</div><div class="mover-change kr-up">+14.8%</div></div>
+          </div>
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-up">HPSP</div><div class="mover-name">반도체 장비</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">62,100</div><div class="mover-change kr-up">+9.3%</div></div>
+          </div>
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-up">리노공업</div><div class="mover-name">반도체 소켓</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">218,500</div><div class="mover-change kr-up">+7.1%</div></div>
+          </div>
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-up">한미반도체</div><div class="mover-name">반도체 장비</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">142,000</div><div class="mover-change kr-up">+5.9%</div></div>
+          </div>
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-up">레인보우로보틱스</div><div class="mover-name">로봇</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">88,300</div><div class="mover-change kr-up">+4.7%</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 급락 TOP5 -->
+      <div>
+        <div class="section-header" style="margin-bottom:16px;">
+          <div class="section-title" style="font-size:16px;">▼ 급락 TOP 5</div>
+          <div class="section-line"></div>
+        </div>
+        <div class="movers-list">
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-down">에코프로</div><div class="mover-name">2차전지 소재</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">98,400</div><div class="mover-change kr-down">-7.2%</div></div>
+          </div>
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-down">셀트리온</div><div class="mover-name">바이오</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">182,000</div><div class="mover-change kr-down">-5.1%</div></div>
+          </div>
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-down">포스코퓨처엠</div><div class="mover-name">2차전지 소재</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">213,000</div><div class="mover-change kr-down">-4.3%</div></div>
+          </div>
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-down">카카오</div><div class="mover-name">플랫폼</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">42,350</div><div class="mover-change kr-down">-3.5%</div></div>
+          </div>
+          <div class="mover-item">
+            <div><div class="mover-ticker kr-down">LG에너지솔루션</div><div class="mover-name">2차전지</div></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:12px;text-align:right">381,000</div><div class="mover-change kr-down">-1.3%</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 업종별 등락 -->
+      <div>
+        <div class="section-header" style="margin-bottom:16px;">
+          <div class="section-title" style="font-size:16px;">업종 동향</div>
+          <div class="section-line"></div>
+        </div>
+        <div class="sector-row"><span class="sector-label">반도체</span><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:90%;background:#ff7675"></div></div><span class="kr-up" style="font-family:'DM Mono',monospace;font-size:11px;min-width:44px;text-align:right">+1.8%</span></div>
+        <div class="sector-row"><span class="sector-label">자동차</span><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:35%;background:#ff7675"></div></div><span class="kr-up" style="font-family:'DM Mono',monospace;font-size:11px;min-width:44px;text-align:right">+0.7%</span></div>
+        <div class="sector-row"><span class="sector-label">금융</span><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:25%;background:#ff7675"></div></div><span class="kr-up" style="font-family:'DM Mono',monospace;font-size:11px;min-width:44px;text-align:right">+0.5%</span></div>
+        <div class="sector-row"><span class="sector-label">바이오</span><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:45%;background:#74b9ff"></div></div><span class="kr-down" style="font-family:'DM Mono',monospace;font-size:11px;min-width:44px;text-align:right">-0.9%</span></div>
+        <div class="sector-row"><span class="sector-label">2차전지</span><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:60%;background:#74b9ff"></div></div><span class="kr-down" style="font-family:'DM Mono',monospace;font-size:11px;min-width:44px;text-align:right">-1.2%</span></div>
+      </div>
+
+      <!-- 국내 경제 일정 -->
+      <div>
+        <div class="section-header" style="margin-bottom:16px;">
+          <div class="section-title" style="font-size:16px;">국내 경제 일정</div>
+          <div class="section-line"></div>
+        </div>
+        <div class="calendar-list">
+          <div class="cal-item">
+            <div class="cal-date">오늘</div>
+            <div><div class="cal-event">소비자심리지수 발표</div><div class="cal-impact impact-med">중요도 중</div></div>
+          </div>
+          <div class="cal-item">
+            <div class="cal-date">다음주</div>
+            <div><div class="cal-event">삼성전자 1분기 잠정실적</div><div class="cal-impact impact-high">중요도 높음</div></div>
+          </div>
+          <div class="cal-item">
+            <div class="cal-date">4월</div>
+            <div><div class="cal-event">한국은행 기준금리 결정</div><div class="cal-impact impact-high">중요도 높음</div></div>
+          </div>
+          <div class="cal-item">
+            <div class="cal-date">4월</div>
+            <div><div class="cal-event">3월 수출입 동향 발표</div><div class="cal-impact impact-med">중요도 중</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <footer>
-  <p>© 2026 USMarketDaily — 투자 참고용 정보이며 투자 권유가 아닙니다</p>
+  <p>© 2026 GlobalMarketDaily — 투자 참고용 정보이며 투자 권유가 아닙니다</p>
   <p id="footer-time"></p>
 </footer>
 
@@ -834,6 +1185,49 @@
           다우지수는 소폭 하락 마감했습니다. 
           VIX 지수 하락으로 전반적인 시장 불안감은 완화된 모습입니다.
         </p>`;
+    }
+  }
+
+  // 탭 전환
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active','kr-active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (tab === 'kr') btn.classList.add('kr-active');
+    else btn.classList.add('active');
+    if (tab === 'kr' && !window.krAILoaded) { fetchKRAI(); window.krAILoaded = true; }
+  }
+
+  // 국내 AI 시황 요약
+  async function fetchKRAI() {
+    const el = document.getElementById('ai-kr-text');
+    el.innerHTML = '<div class="ai-loading"><span>AI 분석 중</span><div class="ai-loading-dots"><span>.</span><span>.</span><span>.</span></div></div>';
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{
+            role: "user",
+            content: `오늘 한국 증시 상황을 간략하게 한국어로 요약해줘.
+현재 데이터: KOSPI +0.45%(2,748.11), KOSDAQ -0.44%(854.22), 원달러 1,338.50원.
+주요 이슈: 한국은행 금리 동결(3.0%), 삼성전자 HBM 납품 확정, 외국인 4거래일 순매수, 반도체 강세, 2차전지·바이오 약세.
+3~4문장으로 핵심만 간결하고 전문적으로 요약해줘.`
+          }]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.[0]?.text || "요약을 불러올 수 없습니다.";
+      el.innerHTML = `<p style="font-size:13px;line-height:1.7;color:var(--text)">${text}</p>`;
+    } catch(e) {
+      el.innerHTML = `<p style="font-size:13px;line-height:1.7;color:var(--text)">
+        오늘 코스피는 외국인 순매수와 반도체 강세에 힘입어 0.45% 상승 마감했습니다.
+        한국은행의 기준금리 동결 결정으로 채권 시장은 안정세를 유지했으며,
+        삼성전자·SK하이닉스 등 반도체 대형주가 지수 상승을 이끌었습니다.
+        반면 2차전지·바이오 업종은 차익실현 매물로 약세를 보였습니다.
+      </p>`;
     }
   }
 
