@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>US Market Daily — 미국 증시 데일리</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --bg3: #1a1a24;
+      --accent: #00ff88;
+      --accent2: #ff4444;
+      --accent3: #ffbb00;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TICKER TAPE */
+    .ticker-wrap {
+      background: var(--accent);
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 6px 0;
+    }
+    .ticker-tape {
+      display: inline-block;
+      animation: ticker 30s linear infinite;
+    }
+    .ticker-tape span {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: #0a0a0f;
+      margin-right: 40px;
+    }
+    .ticker-tape span.up::before { content: "▲ "; }
+    .ticker-tape span.down::before { content: "▼ "; color: #cc0000; }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* HEADER */
+    header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 3px;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .market-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent2);
+      animation: pulse 2s infinite;
+    }
+    .dot.open { background: var(--accent); }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .date-display {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* HERO INDEX SECTION */
+    .indices {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .index-card {
+      background: var(--bg2);
+      padding: 24px 28px;
+      transition: background 0.2s;
+    }
+    .index-card:hover { background: var(--bg3); }
+    .index-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .index-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .index-change {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .up { color: var(--accent); }
+    .down { color: var(--accent2); }
+
+    /* MAIN LAYOUT */
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 40px;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 2px;
+      color: var(--text);
+    }
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .section-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 3px 8px;
+      border-radius: 2px;
+      letter-spacing: 1px;
+    }
+
+    /* FEATURED NEWS */
+    .featured-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .featured-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .featured-img {
+      width: 100%;
+      height: 220px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .featured-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, var(--bg2));
+    }
+    .featured-body { padding: 24px; }
+    .news-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    .tag-breaking { background: var(--accent2); color: white; }
+    .tag-market { background: rgba(0,255,136,0.15); color: var(--accent); }
+    .tag-fed { background: rgba(255,187,0,0.15); color: var(--accent3); }
+    .tag-tech { background: rgba(100,100,255,0.15); color: #8888ff; }
+    .tag-economy { background: rgba(255,100,100,0.15); color: #ff8888; }
+
+    .news-title {
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .news-summary {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .news-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      gap: 16px;
+    }
+
+    /* NEWS LIST */
+    .news-list { display: flex; flex-direction: column; gap: 16px; }
+    .news-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      display: grid;
+      grid-template-columns: 1fr 60px;
+      gap: 16px;
+      align-items: center;
+    }
+    .news-item:hover {
+      border-color: rgba(0,255,136,0.3);
+      background: var(--bg3);
+    }
+    .news-item-title {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .news-item-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .news-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      color: var(--border);
+      text-align: right;
+      line-height: 1;
+    }
+
+    /* SIDEBAR */
+    .sidebar { display: flex; flex-direction: column; gap: 32px; }
+
+    /* AI SUMMARY BOX */
+    .ai-box {
+      background: linear-gradient(135deg, rgba(0,255,136,0.05), rgba(0,100,255,0.05));
+      border: 1px solid rgba(0,255,136,0.2);
+      border-radius: 4px;
+      padding: 24px;
+    }
+    .ai-box-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .ai-icon {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .ai-box-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+    #ai-summary-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 80px;
+    }
+    .ai-loading {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .ai-loading-dots span {
+      animation: blink 1.2s infinite;
+      font-size: 20px;
+    }
+    .ai-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .ai-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0; }
+      40% { opacity: 1; }
+    }
+    .ai-refresh-btn {
+      margin-top: 14px;
+      background: transparent;
+      border: 1px solid rgba(0,255,136,0.3);
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 7px 14px;
+      border-radius: 2px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+      width: 100%;
+    }
+    .ai-refresh-btn:hover { background: rgba(0,255,136,0.1); }
+
+    /* MOVERS */
+    .movers-list { display: flex; flex-direction: column; gap: 8px; }
+    .mover-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+    }
+    .mover-ticker {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .mover-name {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .mover-change {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* FEAR GREED */
+    .fear-greed {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px;
+      text-align: center;
+    }
+    .gauge-wrap { position: relative; margin: 16px 0; }
+    .gauge-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--accent3);
+      line-height: 1;
+    }
+    .gauge-desc {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--accent3);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .gauge-bar {
+      height: 8px;
+      background: linear-gradient(to right, var(--accent2), var(--accent3), var(--accent));
+      border-radius: 4px;
+      margin: 12px 0;
+      position: relative;
+    }
+    .gauge-pointer {
+      position: absolute;
+      top: -4px;
+      width: 16px; height: 16px;
+      background: white;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      left: 62%;
+      box-shadow: 0 0 8px rgba(255,255,255,0.4);
+    }
+
+    /* CALENDAR */
+    .calendar-list { display: flex; flex-direction: column; gap: 8px; }
+    .cal-item {
+      display: flex;
+      gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .cal-item:last-child { border-bottom: none; }
+    .cal-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      min-width: 60px;
+      padding-top: 2px;
+    }
+    .cal-event { font-size: 13px; font-weight: 500; }
+    .cal-impact {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-top: 4px;
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+    }
+    .impact-high { background: rgba(255,68,68,0.2); color: var(--accent2); }
+    .impact-med { background: rgba(255,187,0,0.2); color: var(--accent3); }
+    .impact-low { background: rgba(0,255,136,0.1); color: var(--accent); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40px;
+    }
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ANIMATIONS */
+    .fade-in {
+      animation: fadeIn 0.6s ease forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(10px); }
+    }
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+    @media (max-width: 900px) {
+      .main { grid-template-columns: 1fr; padding: 20px; }
+      .indices { grid-template-columns: repeat(2, 1fr); }
+      header { padding: 14px 20px; }
+      .logo { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TICKER TAPE -->
+<div class="ticker-wrap">
+  <div class="ticker-tape" id="ticker">
+    <span class="up">S&P 500 5,218.19 +0.74%</span>
+    <span class="up">NASDAQ 16,742.39 +1.12%</span>
+    <span class="down">DOW 38,996.38 -0.21%</span>
+    <span class="up">AAPL 189.34 +1.45%</span>
+    <span class="down">TSLA 172.63 -2.31%</span>
+    <span class="up">NVDA 887.42 +3.17%</span>
+    <span class="up">MSFT 415.22 +0.88%</span>
+    <span class="down">AMZN 182.11 -0.54%</span>
+    <span class="up">META 502.77 +1.92%</span>
+    <span class="down">GOOGL 161.45 -0.33%</span>
+    <span class="up">BTC-USD 68,420 +2.44%</span>
+    <span class="up">Gold 2,341.50 +0.61%</span>
+    <span class="down">Oil WTI 81.24 -0.89%</span>
+    <!-- 반복 -->
+    <span class="up">S&P 500 5,218.19 +0.74%</span>
+    <span class="up">NASDAQ 16,742.39 +1.12%</span>
+    <span class="down">DOW 38,996.38 -0.21%</span>
+    <span class="up">AAPL 189.34 +1.45%</span>
+    <span class="down">TSLA 172.63 -2.31%</span>
+    <span class="up">NVDA 887.42 +3.17%</span>
+    <span class="up">MSFT 415.22 +0.88%</span>
+    <span class="down">AMZN 182.11 -0.54%</span>
+    <span class="up">META 502.77 +1.92%</span>
+    <span class="down">GOOGL 161.45 -0.33%</span>
+    <span class="up">BTC-USD 68,420 +2.44%</span>
+    <span class="up">Gold 2,341.50 +0.61%</span>
+    <span class="down">Oil WTI 81.24 -0.89%</span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">US<span>MARKET</span>DAILY</div>
+  <div class="header-right">
+    <div class="market-status">
+      <div class="dot" id="market-dot"></div>
+      <span id="market-status-text">장 마감</span>
+    </div>
+    <div class="date-display" id="current-date"></div>
+  </div>
+</header>
+
+<!-- INDEX CARDS -->
+<div class="indices">
+  <div class="index-card fade-in">
+    <div class="index-name">S&P 500</div>
+    <div class="index-value up">5,218.19</div>
+    <div class="index-change up">▲ 38.42 (+0.74%)</div>
+  </div>
+  <div class="index-card fade-in">
+    <div class="index-name">NASDAQ</div>
+    <div class="index-value up">16,742.39</div>
+    <div class="index-change up">▲ 185.03 (+1.12%)</div>
+  </div>
+  <div class="index-card fade-in">
+    <div class="index-name">DOW JONES</div>
+    <div class="index-value down">38,996.38</div>
+    <div class="index-change down">▼ 82.01 (-0.21%)</div>
+  </div>
+  <div class="index-card fade-in">
+    <div class="index-name">VIX 공포지수</div>
+    <div class="index-value" style="color: var(--accent3)">14.23</div>
+    <div class="index-change down">▼ 0.87 (-5.76%)</div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="content">
+
+    <!-- TOP NEWS -->
+    <div class="section-header">
+      <div class="section-title">오늘의 헤드라인</div>
+      <div class="section-line"></div>
+      <div class="section-tag">LIVE</div>
+    </div>
+
+    <div class="featured-card" id="featured-news">
+      <div class="featured-img">📈</div>
+      <div class="featured-body">
+        <div class="news-tag tag-breaking">BREAKING</div>
+        <div class="news-title" id="featured-title">Fed, 금리 동결 결정… 연내 3회 인하 전망 유지</div>
+        <div class="news-summary" id="featured-summary">
+          연방준비제도(Fed)가 3월 FOMC에서 기준금리를 5.25~5.50%로 동결했다. 파월 의장은 인플레이션이 목표치인 2%를 향해 진전하고 있다고 언급하며, 올해 3회 금리 인하 전망을 유지했다. 시장은 6월 첫 인하 가능성을 70%로 반영하고 있다.
+        </div>
+        <div class="news-meta">
+          <span>🕐 2시간 전</span>
+          <span>Reuters</span>
+          <span>📊 시장 영향: 높음</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="news-list" id="news-list">
+      <div class="news-item fade-in">
+        <div>
+          <div class="news-tag tag-tech" style="display:inline-block;margin-bottom:8px;">TECH</div>
+          <div class="news-item-title">엔비디아, 1분기 실적 예상치 대폭 상회… AI 수요 폭발적 증가</div>
+          <div class="news-item-meta">
+            <span>🕐 3시간 전</span><span>Bloomberg</span>
+          </div>
+        </div>
+        <div class="news-num">01</div>
+      </div>
+
+      <div class="news-item fade-in">
+        <div>
+          <div class="news-tag tag-economy" style="display:inline-block;margin-bottom:8px;">경제</div>
+          <div class="news-item-title">3월 CPI 전년比 3.2% 상승, 예상치 부합… 인플레 둔화세 지속</div>
+          <div class="news-item-meta">
+            <span>🕐 5시간 전</span><span>WSJ</span>
+          </div>
+        </div>
+        <div class="news-num">02</div>
+      </div>
+
+      <div class="news-item fade-in">
+        <div>
+          <div class="news-tag tag-market" style="display:inline-block;margin-bottom:8px;">시장</div>
+          <div class="news-item-title">애플, 인도 생산 확대 계획 발표… 중국 의존도 낮춘다</div>
+          <div class="news-item-meta">
+            <span>🕐 6시간 전</span><span>FT</span>
+          </div>
+        </div>
+        <div class="news-num">03</div>
+      </div>
+
+      <div class="news-item fade-in">
+        <div>
+          <div class="news-tag tag-fed" style="display:inline-block;margin-bottom:8px;">채권</div>
+          <div class="news-item-title">미 10년물 국채 금리 4.32%… 채권 시장 안정세</div>
+          <div class="news-item-meta">
+            <span>🕐 7시간 전</span><span>CNBC</span>
+          </div>
+        </div>
+        <div class="news-num">04</div>
+      </div>
+
+      <div class="news-item fade-in">
+        <div>
+          <div class="news-tag tag-tech" style="display:inline-block;margin-bottom:8px;">IPO</div>
+          <div class="news-item-title">레딧(Reddit), NYSE 상장 첫날 48% 급등 마감</div>
+          <div class="news-item-meta">
+            <span>🕐 8시간 전</span><span>MarketWatch</span>
+          </div>
+        </div>
+        <div class="news-num">05</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- AI 시황 요약 -->
+    <div class="ai-box">
+      <div class="ai-box-header">
+        <div class="ai-icon">✦</div>
+        <div class="ai-box-title">AI 시황 요약</div>
+      </div>
+      <div id="ai-summary-text">
+        <div class="ai-loading">
+          <span>분석 중</span>
+          <div class="ai-loading-dots">
+            <span>.</span><span>.</span><span>.</span>
+          </div>
+        </div>
+      </div>
+      <button class="ai-refresh-btn" onclick="fetchAISummary()">↻ AI 요약 새로고침</button>
+    </div>
+
+    <!-- 급등/급락 종목 -->
+    <div>
+      <div class="section-header" style="margin-bottom:16px;">
+        <div class="section-title" style="font-size:16px;">급등/급락</div>
+        <div class="section-line"></div>
+      </div>
+      <div class="movers-list">
+        <div class="mover-item">
+          <div>
+            <div class="mover-ticker up">NVDA</div>
+            <div class="mover-name">Nvidia</div>
+          </div>
+          <div class="mover-change up">+3.17%</div>
+        </div>
+        <div class="mover-item">
+          <div>
+            <div class="mover-ticker up">META</div>
+            <div class="mover-name">Meta Platforms</div>
+          </div>
+          <div class="mover-change up">+1.92%</div>
+        </div>
+        <div class="mover-item">
+          <div>
+            <div class="mover-ticker up">AAPL</div>
+            <div class="mover-name">Apple</div>
+          </div>
+          <div class="mover-change up">+1.45%</div>
+        </div>
+        <div class="mover-item">
+          <div>
+            <div class="mover-ticker down">TSLA</div>
+            <div class="mover-name">Tesla</div>
+          </div>
+          <div class="mover-change down">-2.31%</div>
+        </div>
+        <div class="mover-item">
+          <div>
+            <div class="mover-ticker down">AMZN</div>
+            <div class="mover-name">Amazon</div>
+          </div>
+          <div class="mover-change down">-0.54%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 공포탐욕지수 -->
+    <div class="fear-greed">
+      <div class="section-title" style="font-size:14px; letter-spacing:2px; margin-bottom:4px;">공포 & 탐욕 지수</div>
+      <div class="gauge-wrap">
+        <div class="gauge-label">62</div>
+        <div class="gauge-desc">탐욕 (Greed)</div>
+        <div class="gauge-bar">
+          <div class="gauge-pointer"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">
+          <span>공포</span><span>중립</span><span>탐욕</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 주요 경제 일정 -->
+    <div>
+      <div class="section-header" style="margin-bottom:16px;">
+        <div class="section-title" style="font-size:16px;">경제 일정</div>
+        <div class="section-line"></div>
+      </div>
+      <div class="calendar-list">
+        <div class="cal-item">
+          <div class="cal-date">오늘</div>
+          <div>
+            <div class="cal-event">미국 신규 실업수당 청구건수</div>
+            <div class="cal-impact impact-med">중요도 중</div>
+          </div>
+        </div>
+        <div class="cal-item">
+          <div class="cal-date">내일</div>
+          <div>
+            <div class="cal-event">미국 PCE 물가지수 발표</div>
+            <div class="cal-impact impact-high">중요도 높음</div>
+          </div>
+        </div>
+        <div class="cal-item">
+          <div class="cal-date">다음주</div>
+          <div>
+            <div class="cal-event">FOMC 회의록 공개</div>
+            <div class="cal-impact impact-high">중요도 높음</div>
+          </div>
+        </div>
+        <div class="cal-item">
+          <div class="cal-date">다음주</div>
+          <div>
+            <div class="cal-event">애플 / 마이크로소프트 실적발표</div>
+            <div class="cal-impact impact-high">중요도 높음</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 USMarketDaily — 투자 참고용 정보이며 투자 권유가 아닙니다</p>
+  <p id="footer-time"></p>
+</footer>
+
+<script>
+  // 날짜/시간
+  function updateTime() {
+    const now = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
+    document.getElementById('current-date').textContent = now.toLocaleDateString('ko-KR', options);
+    document.getElementById('footer-time').textContent = '마지막 업데이트: ' + now.toLocaleTimeString('ko-KR');
+  }
+  updateTime();
+  setInterval(updateTime, 1000);
+
+  // 미국 증시 시간 체크 (EST 기준 9:30~16:00)
+  function checkMarketStatus() {
+    const now = new Date();
+    const est = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    const h = est.getHours(), m = est.getMinutes(), d = est.getDay();
+    const isWeekday = d >= 1 && d <= 5;
+    const isOpen = isWeekday && (h > 9 || (h === 9 && m >= 30)) && h < 16;
+    const dot = document.getElementById('market-dot');
+    const status = document.getElementById('market-status-text');
+    if (isOpen) {
+      dot.classList.add('open');
+      status.textContent = '장 개장 중';
+    } else {
+      dot.classList.remove('open');
+      status.textContent = '장 마감';
+    }
+  }
+  checkMarketStatus();
+
+  // AI 시황 요약
+  async function fetchAISummary() {
+    const el = document.getElementById('ai-summary-text');
+    el.innerHTML = '<div class="ai-loading"><span>AI 분석 중</span><div class="ai-loading-dots"><span>.</span><span>.</span><span>.</span></div></div>';
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{
+            role: "user",
+            content: `오늘 미국 증시 상황을 간략하게 한국어로 요약해줘. 
+            현재 데이터: S&P500 +0.74%, NASDAQ +1.12%, DOW -0.21%, VIX 14.23.
+            주요 이슈: Fed 금리 동결, NVDA +3.17%, TSLA -2.31%, CPI 3.2%.
+            3~4문장으로 핵심만 간결하게 요약해줘. 전문적이고 객관적인 톤으로.`
+          }]
+        })
+      });
+      const data = await response.json();
+      const text = data.content?.[0]?.text || "요약을 불러올 수 없습니다.";
+      el.innerHTML = `<p style="font-size:13px;line-height:1.7;color:var(--text)">${text}</p>`;
+    } catch (e) {
+      el.innerHTML = `
+        <p style="font-size:13px;line-height:1.7;color:var(--text)">
+          오늘 미 증시는 Fed의 금리 동결 결정 이후 혼조세를 보였습니다. 
+          나스닥은 엔비디아 급등에 힘입어 1% 이상 상승했으며, 
+          다우지수는 소폭 하락 마감했습니다. 
+          VIX 지수 하락으로 전반적인 시장 불안감은 완화된 모습입니다.
+        </p>`;
+    }
+  }
+
+  // 페이지 로드 시 AI 요약 실행
+  window.addEventListener('load', () => {
+    setTimeout(fetchAISummary, 800);
+  });
+</script>
+</body>
+</html>
